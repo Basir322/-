@@ -1,0 +1,170 @@
+<!DOCTYPE html>  
+<html lang="ru">    
+<head>    
+    <meta charset="UTF-8">    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>Реальный Таспех 📿</title>    
+    <style>    
+        body {    
+            font-family: Arial, sans-serif;    
+            text-align: center;    
+            background: url('https://www.transparenttextures.com/patterns/golden-brocade.png'), #f4f4f4;  
+            padding: 20px;    
+        }    
+        #taspeh-container {    
+            display: flex;    
+            justify-content: center;    
+            align-items: center;    
+            position: relative;    
+            width: 250px;    
+            height: 250px;    
+            margin: auto;    
+            background: url('https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/Islamic_Art_Pattern_01.svg/1024px-Islamic_Art_Pattern_01.svg.png');    
+            background-size: cover;  
+            border-radius: 50%;    
+            border: 5px solid gold;    
+            box-shadow: 0 0 20px rgba(218, 165, 32, 0.8);    
+        }    
+        .bead {    
+            width: 25px;    
+            height: 25px;    
+            background: radial-gradient(circle, #8B4513, #5D2B2B);    
+            border: 2px solid gold;    
+            border-radius: 50%;    
+            position: absolute;    
+            transition: all 0.3s ease-in-out;    
+        }    
+        #allah-text {    
+            position: absolute;    
+            font-size: 40px;    
+            font-weight: bold;    
+            color: gold;    
+            text-shadow: 2px 2px 10px rgba(255, 215, 0, 0.8);    
+        }    
+        #button {    
+            font-size: 20px;    
+            width: 80px;    
+            height: 80px;    
+            line-height: 80px;    
+            text-align: center;    
+            border: none;    
+            background: linear-gradient(45deg, #007BFF, #0056b3);    
+            color: white;    
+            border-radius: 50%;    
+            cursor: pointer;    
+            margin-top: 50px;    
+            box-shadow: 0 0 15px rgba(0, 123, 255, 0.8);    
+        }    
+        #button:active {    
+            background: #0056b3;    
+        }    
+        #counter {    
+            font-size: 32px;    
+            margin: 20px 0;    
+            color: darkred;    
+            font-weight: bold;    
+        }    
+        #suggestions {    
+            margin-top: 20px;    
+            font-size: 18px;    
+            color: #333;    
+            font-style: italic;    
+        }    
+        #install-button {    
+            position: absolute;    
+            top: 10px;    
+            left: 10px;    
+            font-size: 14px;    
+            background: #28a745;    
+            color: white;    
+            border: none;    
+            padding: 5px 10px;    
+            border-radius: 5px;    
+            cursor: pointer;    
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);    
+        }    
+    </style>    
+</head>    
+<body>  
+    <button id="install-button">Скачать</button>  
+
+    <h1 style="color: darkred; text-shadow: 2px 2px 10px gold;">Реальный Таспех 📿</h1>    
+    <div id="taspeh-container">    
+        <div id="allah-text">الله</div>    
+    </div>    
+    <div id="counter">0</div>    
+    <button id="button" onclick="moveBeads()">📿</button>    
+    <div id="suggestions">Начни с "Субханаллах"</div>    
+
+    <script>    
+        let countValue = 0;    
+        let suraIndex = 0;    
+        const suras = ["Субханаллах", "Альхамдулиллях", "Аллаху Акбар", "Ля иляха илляллах"];    
+        const taspehContainer = document.getElementById("taspeh-container");    
+  
+        const numBeads = 28;    
+        let beads = [];    
+  
+        function createTaspeh() {    
+            for (let i = 0; i < numBeads; i++) {    
+                let angle = (i / numBeads) * (2 * Math.PI);    
+                let x = 115 + 90 * Math.cos(angle);    
+                let y = 100 + 90 * Math.sin(angle);    
+  
+                let bead = document.createElement("div");    
+                bead.classList.add("bead");    
+                bead.style.left = `${x}px`;    
+                bead.style.top = `${y}px`;    
+  
+                taspehContainer.appendChild(bead);    
+                beads.push({ element: bead, angle });    
+            }    
+        }    
+  
+        function moveBeads() {    
+            countValue++;    
+            document.getElementById("counter").innerText = countValue;    
+  
+            for (let i = 0; i < beads.length; i++) {    
+                let newAngle = beads[i].angle + (2 * Math.PI / numBeads);    
+                let x = 100 + 90 * Math.cos(newAngle);    
+                let y = 100 + 120 * Math.sin(newAngle);    
+  
+                beads[i].element.style.left = `${x}px`;    
+                beads[i].element.style.top = `${y}px`;    
+                beads[i].angle = newAngle;    
+            }    
+  
+            if (countValue % 33 === 0) {    
+                navigator.vibrate(200);    
+                suraIndex = (suraIndex + 1) % suras.length;    
+                document.getElementById("suggestions").innerText = "Теперь скажи: " + suras[suraIndex];    
+            }    
+        }    
+
+        createTaspeh();    
+
+        let deferredPrompt;    
+        const installButton = document.getElementById("install-button");    
+
+        window.addEventListener("beforeinstallprompt", (e) => {    
+            e.preventDefault();    
+            deferredPrompt = e;    
+            installButton.style.display = "block";    
+        });    
+
+        installButton.addEventListener("click", () => {    
+            if (deferredPrompt) {    
+                deferredPrompt.prompt();    
+                deferredPrompt.userChoice.then((choiceResult) => {    
+                    if (choiceResult.outcome === "accepted") {    
+                        console.log("Пользователь установил приложение");    
+                    }    
+                    deferredPrompt = null;    
+                });    
+            }    
+        });    
+
+    </script>  
+</body>    
+</html>
